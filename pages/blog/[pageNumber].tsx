@@ -1,4 +1,6 @@
-export const getStaticPaths = async () => {
+import { GetStaticPaths, GetStaticProps } from "next";
+
+export const getStaticPaths: GetStaticPaths = async () => {
   const res = await fetch(`https://jsonplaceholder.typicode.com/posts`);
   const data = await res.json();
 
@@ -9,17 +11,18 @@ export const getStaticPaths = async () => {
       },
     };
   });
+  console.log("Logging on Server side Paths", data);
   return {
     paths,
     fallback: false,
   };
 };
-export const getStaticProps = async (context: {}) => {
-  console.log(context)
-  const id = context.params.pageNumber;
+export const getStaticProps: GetStaticProps = async ({ params }: {}) => {
+  console.log(params);
+  const id = params.pageNumber;
   const res = await fetch(`https://jsonplaceholder.typicode.com/posts/${id}`);
   const data = await res.json();
-
+  console.log("Logging on Server side Static", data);
   return {
     props: {
       data,
@@ -30,6 +33,7 @@ interface BlogProps {
   data: { id: number; title: string; body: string };
 }
 const BlogPage = ({ data }: BlogProps) => {
+  console.log("Logging on Client side", data);
   const { id, title, body } = data;
   return (
     <div>
